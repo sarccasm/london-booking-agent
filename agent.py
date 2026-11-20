@@ -102,6 +102,7 @@ class BookingAgent:
         self.history = []
         self.restaurant = ""
         self.manager_confirmed = False
+        self.user_notes = []
 
     def opening(self) -> Decision:
         text = (
@@ -273,6 +274,7 @@ class BookingAgent:
             "booking_phone": self.phone or None,
             "restaurant_name_verified": self.restaurant or None,
             "manager_explicitly_confirmed": self.manager_confirmed,
+            "operator_supplied_information": self.user_notes,
         }
 
         response = await self.client.chat.completions.create(
