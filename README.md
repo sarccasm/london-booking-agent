@@ -33,7 +33,8 @@ The agent initiates the request, interprets manager replies, requests the restau
 
 ## Deliverables
 
-- Telegram conversation screenshot (test accounts)
+- Telegram conversation screenshot (test accounts): see the screenshot supplied with the submission; it is not stored in this repository
+- [Transcribed demonstration conversation](docs/demo-transcript.md)
 - Source code in this repository
 - Decision-log evidence: local `logs/decisions-*.jsonl` files are ignored for privacy; share a reviewed/redacted export separately if required
 - [Tool choices and AI use](docs/notes.md)
