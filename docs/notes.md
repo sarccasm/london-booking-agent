@@ -1,11 +1,11 @@
-# Tool choices and AI use (draft, edit to match actual work)
+# Tools and AI use
 
-1. Considered n8n, but its Telegram Bot API workflow cannot initiate a DM to an arbitrary user.
-2. Selected Python and Telethon to initiate and receive messages via an authorized Telegram user account.
-3. Selected OpenAI API to interpret free-form replies and draft polite British-English responses.
-4. Used Python's zoneinfo to resolve today's date and 17:00 in Europe/London.
-5. Used python-dotenv for local configuration, keeping secrets outside source control.
-6. Used JSONL for a timestamped, machine-readable per-message decision log.
-7. Added guardrails for missing restaurant identity, missing personal details, and alternate times.
-8. Used AI assistance to scaffold code, review conversation logic, and prepare tests and documentation.
-9. Planned second-account testing before contacting the actual manager.
+1. Built a custom Python booking agent instead of using a ready-made restaurant booking bot.
+2. Used **Telethon** to send and receive messages from a Telegram user account, including starting the conversation.
+3. Used **Google Gemini** through the local **OmniRoute** proxy to interpret free-form manager replies and compose short, polite British-English messages.
+4. Used the **OpenAI-compatible Python SDK** to call OmniRoute; this does not mean that OpenAI models powered the successful demonstration.
+5. Used `zoneinfo` for the London date/time and `python-dotenv` for local configuration.
+6. Logged message direction, text, what the agent understood, its decision, and status using JSONL.
+7. Added explicit booking confirmation checks, restaurant-name extraction, and refusal of alternative times.
+8. Used AI assistance to develop/debug the code, improve prompts, and devise scenarios.
+9. Tested locally first, then completed a real Telegram message exchange between two developer-controlled accounts on **20 November 2026**. The booking itself was simulated.
