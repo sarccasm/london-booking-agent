@@ -1,0 +1,3 @@
+# What broke / uncertainty (draft, update after testing)
+
+The earlier n8n prototype was a DEMO booking bot and did not contact a restaurant manager; it therefore did not satisfy the central task. The Python agent has been implemented but has not yet been logged in to a Telegram account, tested end-to-end with a second account, or used with the assessment manager. Telethon user-account messaging can be restricted by Telegram, and unusual manager replies may trigger conservative stop conditions. Voice messages are not supported. A real booking must not be claimed until the manager explicitly confirms it and the agent has the restaurant name, date, time and party size.
