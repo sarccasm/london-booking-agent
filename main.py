@@ -31,6 +31,31 @@ async def run_local_test(cfg, log, agent):
                       decision='Stop safely', status='needs_user')
             print('ERROR:', exc)
             return
+        # Rehearse operator handoff exactly as in Telegram mode.
+        attempts = 0
+        while decision.status == 'needs_user' and attempts < 2:
+            question = decision.message or decision.decision or 'What information is missing?'
+            print('\nAGENT NEEDS YOUR INPUT:', question, flush=True)
+            try:
+                answer = (await asyncio.to_thread(input, 'YOUR ANSWER (/stop to cancel): ')).strip()
+            except (EOFError, KeyboardInterrupt):
+                return
+            if not answer or answer.lower() == '/stop':
+                print('Local test stopped: missing operator information')
+                return
+            agent.user_notes.append({'question': question, 'answer': answer})
+            log.write(direction='operator_test', message='[operator supplied information]',
+                      understood=question, decision='Retry with operator facts', status='received')
+            if agent.history and agent.history[-1] == {'role': 'user', 'content': manager_text}:
+                agent.history.pop()
+            try:
+                decision = await agent.respond(manager_text)
+            except Exception as exc:
+                log.write(direction='error', message=str(exc), understood='AI retry failed',
+                          decision='Stop safely', status='needs_user')
+                print('ERROR:', exc)
+                return
+            attempts += 1
         log.write(direction='outbound_test' if decision.status in {'continue', 'confirmed'} else 'system',
                   message=decision.message, understood=decision.understood,
                   decision=decision.decision, status=decision.status)
