@@ -77,6 +77,29 @@ async def run_telegram(cfg, log, agent):
                     return
                 try:
                     result = await agent.respond(text)
+                    # If the agent needs information only the operator knows,
+                    # pause and ask in the local terminal, then retry safely.
+                    attempts = 0
+                    while result.status == 'needs_user' and attempts < 2:
+                        question = result.message or result.decision or 'What information is missing?'
+                        print('\\nAGENT NEEDS YOUR INPUT:', question, flush=True)
+                        answer = (await asyncio.to_thread(input, 'YOUR ANSWER (/stop to cancel): ')).strip()
+                        if not answer or answer.lower() == '/stop':
+                            log.write(direction='system', message='',
+                                      understood='Operator did not provide information',
+                                      decision='Stop without inventing details', status='needs_user')
+                            finished.set()
+                            return
+                        # Save only the operator's explicit answer, never guess.
+                        agent.user_notes.append({'question': question, 'answer': answer})
+                        log.write(direction='operator', message='[operator supplied information]',
+                                  understood=question, decision='Retry with operator facts', status='received')
+                        # respond() already stored the last manager message.
+                        # Remove it before retrying to avoid duplicate turns.
+                        if agent.history and agent.history[-1] == {'role': 'user', 'content': text}:
+                            agent.history.pop()
+                        result = await agent.respond(text)
+                        attempts += 1
                     if result.status in {'continue', 'confirmed'}:
                         if not result.message:
                             raise ValueError('Empty outgoing message')
