@@ -125,7 +125,9 @@ async def run_telegram(cfg, log, agent):
                             agent.history.pop()
                         result = await agent.respond(text)
                         attempts += 1
-                    if result.status in {'continue', 'confirmed'}:
+                    # A polite decline is also an outbound message to the manager.
+                    # needs_user is internal and must never be sent.
+                    if result.status in {'continue', 'confirmed', 'declined'}:
                         if not result.message:
                             raise ValueError('Empty outgoing message')
                         await client.send_message(peer, result.message)
