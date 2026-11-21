@@ -46,7 +46,7 @@ async def main():
         log.write(direction='resume_proposal', message=decision.message,
                   understood=decision.understood, decision=decision.decision,
                   status=decision.status)
-        if decision.status not in {'declined', 'continue'} or not decision.message:
+        if decision.status != 'declined' or not decision.message:
             print('No safe outgoing response. Nothing sent.')
             return
         # Explicitly require the operator to approve this one message.
